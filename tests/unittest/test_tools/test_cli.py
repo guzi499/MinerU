@@ -151,4 +151,9 @@ def test_cli_skip_images():
         data = f.read()
         assert 'image_path' not in data
 
+    md_path = os.path.join(base_output_dir, 'cli_test_01.md')
+    with open(md_path, 'r') as f:
+        md_data = f.read()
+        assert '[IMAGE]' in md_data
+
     shutil.rmtree(temp_output_dir)

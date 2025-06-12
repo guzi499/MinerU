@@ -5,22 +5,37 @@ from magic_pdf.libs.commons import join_path
 from magic_pdf.libs.pdf_image_tools import cut_image
 
 
-def ocr_cut_image_and_table(spans, page, page_id, pdf_bytes_md5, imageWriter):
+def ocr_cut_image_and_table(
+    spans, page, page_id, pdf_bytes_md5, imageWriter, process_images: bool = True
+):
     def return_path(type):
         return join_path(pdf_bytes_md5, type)
+
+    if not process_images:
+        return spans
 
     for span in spans:
         span_type = span['type']
         if span_type == ContentType.Image:
             if not check_img_bbox(span['bbox']) or not imageWriter:
                 continue
-            span['image_path'] = cut_image(span['bbox'], page_id, page, return_path=return_path('images'),
-                                           imageWriter=imageWriter)
+            span['image_path'] = cut_image(
+                span['bbox'],
+                page_id,
+                page,
+                return_path=return_path('images'),
+                imageWriter=imageWriter,
+            )
         elif span_type == ContentType.Table:
             if not check_img_bbox(span['bbox']) or not imageWriter:
                 continue
-            span['image_path'] = cut_image(span['bbox'], page_id, page, return_path=return_path('tables'),
-                                           imageWriter=imageWriter)
+            span['image_path'] = cut_image(
+                span['bbox'],
+                page_id,
+                page,
+                return_path=return_path('tables'),
+                imageWriter=imageWriter,
+            )
 
     return spans
 

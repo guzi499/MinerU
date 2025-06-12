@@ -76,6 +76,7 @@ class InferenceResult(InferenceResultBase):
         end_page_id=None,
         debug_mode=False,
         lang=None,
+        process_images: bool = True,
     ) -> PipeResult:
         """Post-proc the model inference result, Extract the text using the
         third library, such as `pymupdf`
@@ -108,6 +109,7 @@ class InferenceResult(InferenceResultBase):
             end_page_id=end_page_id,
             debug_mode=debug_mode,
             lang=lang,
+            process_images=process_images,
         )
         return res
 
@@ -118,6 +120,7 @@ class InferenceResult(InferenceResultBase):
         end_page_id=None,
         debug_mode=False,
         lang=None,
+        process_images: bool = True,
     ) -> PipeResult:
         """Post-proc the model inference result, Extract the text using `OCR`
         technical.
@@ -150,5 +153,6 @@ class InferenceResult(InferenceResultBase):
             end_page_id=end_page_id,
             debug_mode=debug_mode,
             lang=lang,
+            process_images=process_images,
         )
         return res

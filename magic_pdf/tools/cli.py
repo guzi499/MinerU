@@ -89,7 +89,14 @@ without method specified, auto will be used by default.""",
     help='The ending page for PDF parsing, beginning from 0.',
     default=None,
 )
-def cli(path, output_dir, method, lang, debug_able, start_page_id, end_page_id):
+@click.option(
+    '--skip-images',
+    'skip_images',
+    is_flag=True,
+    default=False,
+    help='Skip processing images and tables during parsing.',
+)
+def cli(path, output_dir, method, lang, debug_able, start_page_id, end_page_id, skip_images):
     os.makedirs(output_dir, exist_ok=True)
     temp_dir = tempfile.mkdtemp()
     def read_fn(path: Path):
@@ -127,7 +134,8 @@ def cli(path, output_dir, method, lang, debug_able, start_page_id, end_page_id):
                 debug_able,
                 start_page_id=start_page_id,
                 end_page_id=end_page_id,
-                lang=lang
+                lang=lang,
+                process_images=not skip_images,
             )
 
         except Exception as e:
@@ -150,7 +158,15 @@ def cli(path, output_dir, method, lang, debug_able, start_page_id, end_page_id):
                     doc_path = Path(fn)
                 doc_paths.append(doc_path)
         datasets = batch_build_dataset(doc_paths, 4, lang)
-        batch_do_parse(output_dir, [str(doc_path.stem) for doc_path in doc_paths], datasets, method, debug_able, lang=lang)
+        batch_do_parse(
+            output_dir,
+            [str(doc_path.stem) for doc_path in doc_paths],
+            datasets,
+            method,
+            debug_able,
+            lang=lang,
+            process_images=not skip_images,
+        )
     else:
         parse_doc(Path(path))
 

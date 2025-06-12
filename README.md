@@ -499,6 +499,8 @@ You can enable MPS acceleration by setting the `device-mode` parameter to `mps` 
 
 [Using MinerU via Command Line](https://mineru.readthedocs.io/en/latest/user_guide/usage/command_line.html)
 
+The CLI now supports a `--skip-images` flag to disable image and table cropping when you only need text content.
+
 > [!TIP]
 > For more information about the output files, please refer to the [Output File Description](docs/output_file_en_us.md).
 

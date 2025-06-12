@@ -490,6 +490,8 @@ pip install -U "magic-pdf[full]" -i https://mirrors.aliyun.com/pypi/simple
 
 [通过命令行使用MinerU](https://mineru.readthedocs.io/en/latest/user_guide/usage/command_line.html)
 
+现在命令行新增 `--skip-images` 选项，可在只需要文本内容时跳过图片和表格裁剪。
+
 > [!TIP]
 > 更多有关输出文件的信息，请参考[输出文件说明](docs/output_file_zh_cn.md)
 

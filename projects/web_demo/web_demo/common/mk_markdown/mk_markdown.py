@@ -131,7 +131,10 @@ def ocr_mk_markdown_with_para_core_v2(paras_of_layout,
                         for line in block['lines']:
                             for span in line['spans']:
                                 if span['type'] == ContentType.Image:
-                                    para_text += f"\n![]({join_path(img_buket_path, span['image_path'])})  \n"
+                                    if span.get('image_path', ''):
+                                        para_text += f"\n![]({join_path(img_buket_path, span['image_path'])})  \n"
+                                    else:
+                                        para_text += "[IMAGE]"
                 for block in para_block['blocks']:  # 2nd.拼image_caption
                     if block['type'] == BlockType.ImageCaption:
                         para_text += merge_para_with_text(block)
@@ -155,8 +158,10 @@ def ocr_mk_markdown_with_para_core_v2(paras_of_layout,
                                         para_text += f"\n\n$\n {span['latex']}\n$\n\n"
                                     elif span.get('html', ''):
                                         para_text += f"\n\n{span['html']}\n\n"
-                                    else:
+                                    elif span.get('image_path', ''):
                                         para_text += f"\n![]({join_path(img_buket_path, span['image_path'])})  \n"
+                                    else:
+                                        para_text += "[TABLE]"
                 for block in para_block['blocks']:  # 3rd.拼table_footnote
                     if block['type'] == BlockType.TableFootnote:
                         para_text += merge_para_with_text(block)

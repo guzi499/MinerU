@@ -124,3 +124,36 @@ def test_cli_path():
 
     # teardown
     shutil.rmtree(temp_output_dir)
+
+
+def test_cli_skip_images():
+    unitest_dir = '/tmp/magic_pdf/unittest/tools'
+    os.makedirs(unitest_dir, exist_ok=True)
+    temp_output_dir = tempfile.mkdtemp(dir=unitest_dir)
+
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        [
+            '-p',
+            'tests/unittest/test_tools/assets/cli/pdf/cli_test_01.pdf',
+            '-o',
+            temp_output_dir,
+            '--skip-images',
+        ],
+    )
+
+    assert result.exit_code == 0
+
+    base_output_dir = os.path.join(temp_output_dir, 'cli_test_01/auto')
+    middle_path = os.path.join(base_output_dir, 'cli_test_01_middle.json')
+    with open(middle_path, 'r') as f:
+        data = f.read()
+        assert 'image_path' not in data
+
+    md_path = os.path.join(base_output_dir, 'cli_test_01.md')
+    with open(md_path, 'r') as f:
+        md_data = f.read()
+        assert '[IMAGE]' in md_data
+
+    shutil.rmtree(temp_output_dir)

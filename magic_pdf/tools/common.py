@@ -91,6 +91,7 @@ def _do_parse(
     layout_model=None,
     formula_enable=None,
     table_enable=None,
+    process_images: bool = True,
 ):
     from magic_pdf.operators.models import InferenceResult
     if debug_able:
@@ -125,7 +126,10 @@ def _do_parse(
                         table_enable=table_enable,
                     )
                     pipe_result = infer_result.pipe_txt_mode(
-                        image_writer, debug_mode=True, lang=ds._lang
+                        image_writer,
+                        debug_mode=True,
+                        lang=ds._lang,
+                        process_images=process_images,
                     )
                 else:
                     infer_result = ds.apply(
@@ -137,7 +141,10 @@ def _do_parse(
                         table_enable=table_enable,
                     )
                     pipe_result = infer_result.pipe_ocr_mode(
-                        image_writer, debug_mode=True, lang=ds._lang
+                        image_writer,
+                        debug_mode=True,
+                        lang=ds._lang,
+                        process_images=process_images,
                     )
 
             elif parse_method == 'txt':
@@ -150,7 +157,10 @@ def _do_parse(
                     table_enable=table_enable,
                 )
                 pipe_result = infer_result.pipe_txt_mode(
-                    image_writer, debug_mode=True, lang=ds._lang
+                    image_writer,
+                    debug_mode=True,
+                    lang=ds._lang,
+                    process_images=process_images,
                 )
             elif parse_method == 'ocr':
                 infer_result = ds.apply(
@@ -162,7 +172,10 @@ def _do_parse(
                     table_enable=table_enable,
                 )
                 pipe_result = infer_result.pipe_ocr_mode(
-                    image_writer, debug_mode=True, lang=ds._lang
+                    image_writer,
+                    debug_mode=True,
+                    lang=ds._lang,
+                    process_images=process_images,
                 )
             else:
                 logger.error('unknown parse method')
@@ -175,20 +188,32 @@ def _do_parse(
         infer_result = InferenceResult(model_list, ds)
         if parse_method == 'ocr':
             pipe_result = infer_result.pipe_ocr_mode(
-                image_writer, debug_mode=True, lang=ds._lang
+                image_writer,
+                debug_mode=True,
+                lang=ds._lang,
+                process_images=process_images,
             )
         elif parse_method == 'txt':
             pipe_result = infer_result.pipe_txt_mode(
-                image_writer, debug_mode=True, lang=ds._lang
+                image_writer,
+                debug_mode=True,
+                lang=ds._lang,
+                process_images=process_images,
             )
         else:
             if ds.classify() == SupportedPdfParseMethod.TXT:
                 pipe_result = infer_result.pipe_txt_mode(
-                        image_writer, debug_mode=True, lang=ds._lang
+                        image_writer,
+                        debug_mode=True,
+                        lang=ds._lang,
+                        process_images=process_images,
                     )
             else:
                 pipe_result = infer_result.pipe_ocr_mode(
-                        image_writer, debug_mode=True, lang=ds._lang
+                        image_writer,
+                        debug_mode=True,
+                        lang=ds._lang,
+                        process_images=process_images,
                     )
 
 
@@ -266,6 +291,7 @@ def do_parse(
     layout_model=None,
     formula_enable=None,
     table_enable=None,
+    process_images: bool = True,
 ):
     parallel_count = 1
     if os.environ.get('MINERU_PARALLEL_INFERENCE_COUNT'):
@@ -279,9 +305,53 @@ def do_parse(
             ds = PymuDocDataset(pdf_bytes, lang=lang)
         else:
             ds = pdf_bytes_or_dataset
-        batch_do_parse(output_dir, [pdf_file_name], [ds], parse_method, debug_able, f_draw_span_bbox=f_draw_span_bbox, f_draw_layout_bbox=f_draw_layout_bbox, f_dump_md=f_dump_md, f_dump_middle_json=f_dump_middle_json, f_dump_model_json=f_dump_model_json, f_dump_orig_pdf=f_dump_orig_pdf, f_dump_content_list=f_dump_content_list, f_make_md_mode=f_make_md_mode, f_draw_model_bbox=f_draw_model_bbox, f_draw_line_sort_bbox=f_draw_line_sort_bbox, f_draw_char_bbox=f_draw_char_bbox, lang=lang)
+        batch_do_parse(
+            output_dir,
+            [pdf_file_name],
+            [ds],
+            parse_method,
+            debug_able,
+            f_draw_span_bbox=f_draw_span_bbox,
+            f_draw_layout_bbox=f_draw_layout_bbox,
+            f_dump_md=f_dump_md,
+            f_dump_middle_json=f_dump_middle_json,
+            f_dump_model_json=f_dump_model_json,
+            f_dump_orig_pdf=f_dump_orig_pdf,
+            f_dump_content_list=f_dump_content_list,
+            f_make_md_mode=f_make_md_mode,
+            f_draw_model_bbox=f_draw_model_bbox,
+            f_draw_line_sort_bbox=f_draw_line_sort_bbox,
+            f_draw_char_bbox=f_draw_char_bbox,
+            lang=lang,
+            process_images=process_images,
+        )
     else:
-        _do_parse(output_dir, pdf_file_name, pdf_bytes_or_dataset, model_list, parse_method, debug_able, start_page_id=start_page_id, end_page_id=end_page_id, lang=lang, layout_model=layout_model, formula_enable=formula_enable, table_enable=table_enable,  f_draw_span_bbox=f_draw_span_bbox, f_draw_layout_bbox=f_draw_layout_bbox, f_dump_md=f_dump_md, f_dump_middle_json=f_dump_middle_json, f_dump_model_json=f_dump_model_json, f_dump_orig_pdf=f_dump_orig_pdf, f_dump_content_list=f_dump_content_list, f_make_md_mode=f_make_md_mode, f_draw_model_bbox=f_draw_model_bbox, f_draw_line_sort_bbox=f_draw_line_sort_bbox, f_draw_char_bbox=f_draw_char_bbox)
+        _do_parse(
+            output_dir,
+            pdf_file_name,
+            pdf_bytes_or_dataset,
+            model_list,
+            parse_method,
+            debug_able,
+            start_page_id=start_page_id,
+            end_page_id=end_page_id,
+            lang=lang,
+            layout_model=layout_model,
+            formula_enable=formula_enable,
+            table_enable=table_enable,
+            f_draw_span_bbox=f_draw_span_bbox,
+            f_draw_layout_bbox=f_draw_layout_bbox,
+            f_dump_md=f_dump_md,
+            f_dump_middle_json=f_dump_middle_json,
+            f_dump_model_json=f_dump_model_json,
+            f_dump_orig_pdf=f_dump_orig_pdf,
+            f_dump_content_list=f_dump_content_list,
+            f_make_md_mode=f_make_md_mode,
+            f_draw_model_bbox=f_draw_model_bbox,
+            f_draw_line_sort_bbox=f_draw_line_sort_bbox,
+            f_draw_char_bbox=f_draw_char_bbox,
+            process_images=process_images,
+        )
 
 
 def batch_do_parse(
@@ -305,6 +375,7 @@ def batch_do_parse(
     layout_model=None,
     formula_enable=None,
     table_enable=None,
+    process_images: bool = True,
 ):
     dss = []
     for v in pdf_bytes_or_datasets:
@@ -334,6 +405,7 @@ def batch_do_parse(
             f_draw_line_sort_bbox=f_draw_line_sort_bbox,
             f_draw_char_bbox=f_draw_char_bbox,
             lang=lang,
+            process_images=process_images,
         )
 
 

@@ -687,7 +687,14 @@ def remove_outside_spans(spans, all_bboxes, all_discarded_blocks):
 
 
 def parse_page_core(
-    page_doc: PageableData, magic_model, page_id, pdf_bytes_md5, imageWriter, parse_mode, lang
+    page_doc: PageableData,
+    magic_model,
+    page_id,
+    pdf_bytes_md5,
+    imageWriter,
+    parse_mode,
+    lang,
+    process_images: bool = True,
 ):
     need_drop = False
     drop_reason = []
@@ -854,7 +861,12 @@ def parse_page_core(
 
     """对image和table截图"""
     spans = ocr_cut_image_and_table(
-        spans, page_doc, page_id, pdf_bytes_md5, imageWriter
+        spans,
+        page_doc,
+        page_id,
+        pdf_bytes_md5,
+        imageWriter,
+        process_images=process_images,
     )
 
     """span填充进block"""
@@ -916,6 +928,7 @@ def pdf_parse_union(
     end_page_id=None,
     debug_mode=False,
     lang=None,
+    process_images: bool = True,
 ):
 
     pdf_bytes_md5 = compute_md5(dataset.data_bits())
@@ -953,7 +966,14 @@ def pdf_parse_union(
         """解析pdf中的每一页"""
         if start_page_id <= page_id <= end_page_id:
             page_info = parse_page_core(
-                page, magic_model, page_id, pdf_bytes_md5, imageWriter, parse_mode, lang
+                page,
+                magic_model,
+                page_id,
+                pdf_bytes_md5,
+                imageWriter,
+                parse_mode,
+                lang,
+                process_images=process_images,
             )
         else:
             page_info = page.get_page_info()
